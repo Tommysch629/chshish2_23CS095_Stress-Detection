@@ -8,11 +8,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
-model = load_model("model_best.h5")
+model = load_model("model.h5")
 cv2.ocl.setUseOpenCL(False)
 emotion_dict = {0: 'anger', 1: 'disgust', 2: 'fear', 3: 'happiness', 4: 'neutral', 5: 'sadness', 6: 'surprise'}
 facecasc = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 path = "emotional_faces_test_data/"
+total_count=0
 for i in range(7):
     count=0
     for j in range(60):
@@ -35,4 +36,6 @@ for i in range(7):
             prediction = model.predict(cropped_img,verbose=None)
             if(emotion_dict[int(np.argmax(prediction))]==emotion_dict[i]):
                 count+=1
-    print(count/120)
+    total_count+=count
+    print(f"{emotion_dict[i]}: {count/120}")
+print(f"Total accuracy: {total_count/840}")
