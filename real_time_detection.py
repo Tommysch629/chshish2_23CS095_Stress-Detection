@@ -8,7 +8,7 @@ from keras.models import load_model
 import matplotlib.pyplot as plt
 import numpy as np
 
-model = load_model("best_val_acc_model.h5")
+model = load_model("model.h5")
 cv2.ocl.setUseOpenCL(False)
 emotion_dict = {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy', 4: 'neutral', 5: 'sad', 6: 'surprise'}
 cap = cv2.VideoCapture(0)

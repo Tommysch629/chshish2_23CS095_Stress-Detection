@@ -84,6 +84,8 @@ def gesture(frame,display_frame,q_gesture):
             result.pose_landmarks,
             mp_pose.POSE_CONNECTIONS,
             landmark_drawing_spec=mp.solutions.drawing_styles.get_default_pose_landmarks_style())
+        cv2.putText(display_frame[0], dict[maxindex], (0, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2,
+                    cv2.LINE_AA)
         nowTime = time.time()
         if (int(nowTime - startTime_gesture)) >= fpsLimit:
             startTime_gesture = time.time() 
@@ -102,7 +104,7 @@ def emotion(frame,display_frame,q_emotion):
         prediction = model.predict(cropped_img,verbose=0)
         maxindex = int(np.argmax(prediction))
         cv2.rectangle(display_frame[0], (x, y - 50), (x + w, y + h + 10), (255, 0, 0), 2)
-        cv2.putText(display_frame[0], emotion_dict[maxindex], (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2,
+        cv2.putText(display_frame[0], emotion_dict[maxindex], (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2,
                     cv2.LINE_AA)
         nowTime = time.time()
         if (int(nowTime - startTime_emotion)) >= fpsLimit:
@@ -132,6 +134,7 @@ def stress_score(c_emotion,c_gesture,q_score):
         elif s_stress<0:
             s_stress=0
         q_score.put(s_stress)
+    return s_stress
     
 def main(q_score,q_emotion,q_gesture):
     while True:
@@ -142,8 +145,10 @@ def main(q_score,q_emotion,q_gesture):
         display_frame=[copy_frame]
         c_emotion=emotion(frame,display_frame,q_emotion,)
         c_gesture=gesture(frame,display_frame,q_gesture,)
-        stress_score(c_emotion,c_gesture,q_score,)
-        cv2.imshow('Video', cv2.resize(display_frame[0], (640, 480), interpolation=cv2.INTER_CUBIC))
+        s_score=stress_score(c_emotion,c_gesture,q_score,)
+        cv2.putText(display_frame[0], str(round(s_score,1)), (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255), 2,
+                    cv2.LINE_AA)
+        cv2.imshow('Video', cv2.resize(display_frame[0], (400, 280), interpolation=cv2.INTER_CUBIC))
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
